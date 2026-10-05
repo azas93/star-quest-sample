@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Star Quest — Printable Birthday Treasure Hunt</title>
+<style>
+  /* === RESET & BASE === */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1a1a2e; background: #fff; }
+
+  /* === TYPOGRAPHY === */
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.35rem; margin-bottom: 0.5rem; }
+  p, li { font-size: 1rem; line-height: 1.6; }
+  .small { font-size: 0.85rem; }
+
+  /* === PAGE A4 (210×297mm) with US Letter fallback === */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 15mm;
+    page-break-after: always;
+    position: relative;
+    background: #0b0e2a;
+    color: #e8e6f0;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  /* === DECORATIVE STARS (CSS only, no images) === */
+  .stars {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; overflow: hidden; z-index: 0;
+  }
+  .stars::before, .stars::after {
+    content: '✦ ✧ ★ ✦ ☆ ✧ ✦ ★ ☆ ✦ ✧ ★ ✦ ☆ ✧ ✦ ★ ✦ ☆ ✧';
+    position: absolute;
+    font-size: 1.2rem;
+    color: rgba(255,255,200,0.18);
+    letter-spacing: 1.2rem;
+    line-height: 2.4rem;
+    word-spacing: 0.8rem;
+    white-space: normal;
+    width: 100%;
+  }
+  .stars::before { top: 8mm; left: 5mm; }
+  .stars::after  { bottom: 8mm; left: 5mm; }
+
+  .content { position: relative; z-index: 1; }
+
+  /* === COVER === */
+  .cover { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  .cover-icon { font-size: 5rem; margin-bottom: 1rem; }
+  .cover h1 { color: #ffd866; font-size: 2.4rem; margin-bottom: 0.6rem; text-shadow: 0 2px 8px rgba(255,216,102,0.3); }
+  .cover .subtitle { color: #a8b4ff; font-size: 1.15rem; margin-bottom: 2rem; }
+  .cover .age { background: rgba(255,216,102,0.15); border: 1px solid #ffd866; border-radius: 8px; padding: 0.5rem 1.5rem; display: inline-block; color: #ffd866; font-weight: 600; margin-bottom: 2rem; }
+  .cover .intro { max-width: 140mm; text-align: left; background: rgba(255,255,255,0.06); border-radius: 10px; padding: 1.2rem 1.5rem; }
+  .cover .intro p { margin-bottom: 0.6rem; }
+  .cover .intro p:last-child { margin-bottom: 0; }
+  .cover .sample-banner { margin-top: 1.5rem; font-size: 0.8rem; color: #8888aa; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  /* === RIDDLE CARD === */
+  .card {
+    background: linear-gradient(135deg, #131744 0%, #1a1e4a 100%);
+    border: 2px solid #2a2f6a;
+    border-radius: 14px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.2rem;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .card-header {
+    display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.7rem;
+  }
+  .card-num {
+    background: #ffd866; color: #0b0e2a; font-weight: 800;
+    width: 2.2rem; height: 2.2rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+  }
+  .card-title { font-size: 1.1rem; font-weight: 700; color: #ffd866; }
+  .card-riddle { font-style: italic; font-size: 1.05rem; line-height: 1.7; margin-bottom: 0.8rem; color: #d4d2ee; }
+  .card-hint {
+    background: rgba(255,216,102,0.08); border-left: 3px solid #ffd866;
+    padding: 0.6rem 0.9rem; border-radius: 0 8px 8px 0; font-size: 0.9rem; color: #c0bdd8;
+  }
+  .card-hint strong { color: #ffd866; }
+  .card-location {
+    margin-top: 0.6rem; font-size: 0.85rem; color: #8888aa;
+  }
+
+  /* === PARENT GUIDE (light background) === */
+  .page-guide {
+    background: #f5f3ff; color: #1a1a2e;
+  }
+  .page-guide .stars::before,
+  .page-guide .stars::after { color: rgba(100,80,180,0.12); }
+
+  .guide-box {
+    background: #fff; border: 2px solid #d4cff0; border-radius: 12px;
+    padding: 1.2rem 1.5rem; margin-bottom: 1rem;
+  }
+  .guide-box h2 { color: #2a1f6e; }
+  .step-num {
+    display: inline-block; background: #2a1f6e; color: #fff;
+    width: 1.6rem; height: 1.6rem; border-radius: 50%; text-align: center;
+    font-size: 0.85rem; font-weight: 700; line-height: 1.6rem; margin-right: 0.4rem; flex-shrink: 0;
+  }
+  .steps { list-style: none; padding: 0; }
+  .steps li { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.7rem; }
+  .safety {
+    background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 0 8px 8px 0;
+    padding: 0.8rem 1rem; margin-top: 0.8rem; font-size: 0.9rem;
+  }
+  .safety strong { color: #e65100; }
+
+  .table-map { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.92rem; }
+  .table-map th { background: #2a1f6e; color: #fff; padding: 0.5rem 0.7rem; text-align: left; }
+  .table-map td { padding: 0.45rem 0.7rem; border-bottom: 1px solid #e0ddf0; }
+  .table-map tr:nth-child(even) td { background: #f0eefa; }
+
+  .footer-sample {
+    text-align: center; font-size: 0.75rem; color: #999; margin-top: 1.5rem;
+    border-top: 1px solid #ddd; padding-top: 0.5rem;
+  }
+
+  /* === PRODUCT PAGE === */
+  .page-product {
+    background: #0b0e2a; color: #e8e6f0;
+  }
+  .product-header {
+    text-align: center; margin-bottom: 1.5rem;
+  }
+  .product-header h1 { color: #ffd866; font-size: 2rem; text-shadow: 0 2px 8px rgba(255,216,102,0.3); }
+  .product-header .tagline { color: #a8b4ff; font-size: 1.1rem; margin-top: 0.3rem; }
+  .sample-watermark {
+    background: #c62828; color: #fff; font-weight: 700; font-size: 0.85rem;
+    padding: 0.5rem 1.5rem; border-radius: 6px; display: inline-block;
+    margin: 1rem auto; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .benefit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+  .benefit-card {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,216,102,0.2);
+    border-radius: 10px; padding: 1rem 1.2rem;
+  }
+  .benefit-card .icon { font-size: 1.6rem; margin-bottom: 0.3rem; }
+  .benefit-card h3 { color: #ffd866; font-size: 1rem; margin-bottom: 0.3rem; }
+  .benefit-card p { font-size: 0.9rem; color: #c0bdd8; line-height: 1.5; }
+  .what-includes {
+    background: rgba(255,255,255,0.06); border-radius: 10px;
+    padding: 1.2rem 1.5rem; margin-bottom: 1.5rem;
+  }
+  .what-includes h2 { color: #ffd866; margin-bottom: 0.6rem; }
+  .what-includes ul { list-style: none; padding: 0; }
+  .what-includes li { padding: 0.3rem 0; font-size: 0.95rem; }
+  .what-includes li::before { content: '✓ '; color: #7ecb7e; font-weight: 700; }
+  .setup-bar {
+    background: rgba(255,216,102,0.1); border: 1px solid #ffd866;
+    border-radius: 10px; padding: 1rem 1.5rem; text-align: center;
+  }
+  .setup-bar strong { color: #ffd866; }
+  .product-footer {
+    text-align: center; font-size: 0.75rem; color: #8888aa; margin-top: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.5rem;
+  }
+
+  /* === LOW-INK PRINT === */
+  @media print {
+    body { background: #fff; }
+    .page {
+      box-shadow: none;
+      margin: 0;
+      width: 210mm;
+      min-height: 279mm; /* US Letter safe height */
+      padding: 12mm 15mm;
+    }
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+    .card { break-inside: avoid; page-break-inside: avoid; }
+    .page, .card, .cover .intro, .cover .age,
+    .page-guide .guide-box, .page-guide .safety,
+    .page-product .benefit-card, .page-product .what-includes,
+    .page-product .setup-bar,
+    .benefit-grid, .what-includes, .setup-bar,
+    .product-header {
+      background: white !important; color: #111 !important;
+    }
+    .page * { color: #111 !important; text-shadow: none !important; }
+    .stars { display: none; }
+    .card { border: 1px dashed #555; }
+    .table-map th { background: #eee; }
+    .sample-watermark { background: #eee; color: #333; border: 2px solid #333; }
+    .page-product { background: #fff !important; }
+    /* US Letter override */
+    @page letter { size: letter portrait; margin: 0; }
+  }
+
+  /* === SCREEN === */
+  @media screen {
+    body { background: #e8e8f0; padding: 10px 0; }
+    .page { box-shadow: 0 2px 12px rgba(0,0,0,0.15); margin-bottom: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== PAGE 1: COVER ==================== -->
+<div class="page cover">
+  <div class="stars"></div>
+  <div class="content">
+    <div class="cover-icon">⭐</div>
+    <h1>Star Quest</h1>
+    <p class="subtitle">The Star Keeper has left a secret trail for you…</p>
+    <span class="age">Ages 6 – 9 · Birthday Treasure Hunt at Home</span>
+    <div class="intro">
+      <p>The <strong>Star Keeper</strong> has hidden a magical treasure somewhere in the house. To find it, you must solve <strong>five riddles and one final card</strong> — one at a time. Each answer leads you to the next hidden star.</p>
+      <p>Follow the trail of stars all the way to the treasure!</p>
+    </div>
+    <p class="sample-banner">Sample Demo · Not for Sale · Personal Use Only</p>
+  </div>
+</div>
+
+<!-- ==================== PAGE 2: CARDS 1–3 ==================== -->
+<div class="page">
+  <div class="stars"></div>
+  <div class="content">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">1</div>
+        <div class="card-title">The Fuzzy Friend</div>
+      </div>
+      <p class="card-riddle">
+        "I'm soft and I live on the couch.<br>
+        You squeeze me tight when you hear a story.<br>
+        Who am I?"
+      </p>
+      <p class="card-location">📌 <em>Hand this card to the child to start the hunt.</em></p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">2</div>
+        <div class="card-title">The Keeper of Stories</div>
+      </div>
+      <p class="card-riddle">
+        "I hold many pages but I only speak when someone reads me.<br>
+        My adventures sleep inside.<br>
+        Who am I?"
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">3</div>
+        <div class="card-title">The Loyal Pair</div>
+      </div>
+      <p class="card-riddle">
+        "We always go in twos to walk outside.<br>
+        We wait by the door, side by side.<br>
+        Who are we?"
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== PAGE 3: CARDS 4–5 + FINAL CARD ==================== -->
+<div class="page">
+  <div class="stars"></div>
+  <div class="content">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">4</div>
+        <div class="card-title">The Quiet Helper</div>
+      </div>
+      <p class="card-riddle">
+        "I carry every meal but I never eat.<br>
+        The whole family gathers around me.<br>
+        Who am I?"
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">5</div>
+        <div class="card-title">The Patient Seat</div>
+      </div>
+      <p class="card-riddle">
+        "You sit on me when you need a rest.<br>
+        I'm always here, right where you left me.<br>
+        Who am I?"
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">★</div>
+        <div class="card-title">The Star Keeper's Message</div>
+      </div>
+      <p class="card-riddle">
+        "You followed the star trail with courage!<br>
+        All five stars are together now…<br>
+        Bring this card to a grown-up to claim your treasure."
+      </p>
+      <p class="card-location">🏁 <em>The child finds this card on a chair seat and brings it to the adult.</em></p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== PAGE 4: PARENT GUIDE ==================== -->
+<div class="page page-guide">
+  <div class="stars"></div>
+  <div class="content">
+
+    <div class="guide-box">
+      <h2>📋 Setup — Parent Guide</h2>
+      <p style="margin-bottom:0.8rem;">Print this page and the riddle cards (pages 2–3). Cut out the six cards along the card borders. You will need scissors.</p>
+
+      <h2>🗺️ Where to Hide Each Card</h2>
+      <table class="table-map">
+        <thead>
+          <tr><th>Card</th><th>Riddle Answer</th><th>Hide It Here</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Card 1 (hand to child)</td><td>Cushion</td><td>— Starting point, not hidden</td></tr>
+          <tr><td>Card 2</td><td>Book</td><td>Under a couch cushion</td></tr>
+          <tr><td>Card 3</td><td>Shoes</td><td>Inside a book on a shelf</td></tr>
+          <tr><td>Card 4</td><td>Table</td><td>Next to shoes near the front door</td></tr>
+          <tr><td>Card 5</td><td>Chair</td><td>On the kitchen or dining table</td></tr>
+          <tr><td>Final Card (★)</td><td>Grown-up</td><td>On the seat of a sturdy chair</td></tr>
+          <tr><td>Treasure (adult gives)</td><td>🎉 Surprise!</td><td>Hand to child after the final card</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="guide-box">
+      <h2>🚀 How to Run the Hunt</h2>
+      <ol class="steps">
+        <li><span class="step-num">1</span><span><strong>Cut out</strong> all six riddle cards from pages 2 and 3.</span></li>
+        <li><span class="step-num">2</span><span><strong>Hide</strong> cards 2 through 6 at the locations shown above. Do not hide card 1.</span></li>
+        <li><span class="step-num">3</span><span><strong>Prepare</strong> a small treasure (candy, stickers, a little toy) in a box or bag.</span></li>
+        <li><span class="step-num">4</span><span><strong>Hand</strong> card 1 to the child and ask them to read the riddle out loud.</span></li>
+        <li><span class="step-num">5</span><span><strong>Guide</strong> the child without giving away answers. Cheer them on!</span></li>
+        <li><span class="step-num">6</span><span><strong>When</strong> the child brings you the final card, celebrate and give them the treasure!</span></li>
+      </ol>
+    </div>
+
+    <div class="safety">
+      <strong>⚠️ Safety:</strong> Never hide a card inside an electrical appliance, up high, or anywhere hard to reach. Make sure every hiding spot is safe and age-appropriate. An adult must be present for the entire hunt.
+    </div>
+
+    <div class="footer-sample">
+      Sample Demo · Star Quest · Not for Sale · Personal Use Only · October 2026<br>
+      Browser rendering not verified — test before printing
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== PAGE 5: PRODUCT PAGE ==================== -->
+<div class="page page-product">
+  <div class="stars"></div>
+  <div class="content">
+
+    <div class="product-header">
+      <h1>⭐ Star Quest</h1>
+      <p class="tagline">A Printable Birthday Treasure Hunt for Kids</p>
+      <div class="sample-watermark">Sample · Not for Sale</div>
+    </div>
+
+    <div class="benefit-grid">
+      <div class="benefit-card">
+        <div class="icon">⏱️</div>
+        <h3>Under 15 Minutes Setup</h3>
+        <p>Print, cut, and hide. No prep the night before. Just scissors and a hiding spot for each card.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="icon">🎂</div>
+        <h3>Built for Birthdays</h3>
+        <p>Designed for birthday parties at home. One child or a small group — the hunt works either way.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="icon">🧠</div>
+        <h3>Age-Right Riddles</h3>
+        <p>Five riddles written for ages 6 to 9. Challenging enough to feel like a real quest, easy enough to finish with a smile.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="icon">🖨️</div>
+        <h3>Low-Ink, High Impact</h3>
+        <p>Designed for home printers. Dark backgrounds on screen switch to clean black-on-white when you print. Saves ink.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="icon">📖</div>
+        <h3>Parent Guide Included</h3>
+        <p>A separate guide page with a step-by-step setup, hiding-location table, and safety reminders. No guesswork.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="icon">🔒</div>
+        <h3>No Wi-Fi, No Accounts</h3>
+        <p>One HTML file. Works offline. No downloads, no logins, no links to click. Just print and play.</p>
+      </div>
+    </div>
+
+    <div class="what-includes">
+      <h2>What's Inside This File</h2>
+      <ul>
+        <li>Cover page with story setup for the child</li>
+        <li>Six illustrated riddle cards (five riddles + one final card)</li>
+        <li>No answers printed on the children's cards</li>
+        <li>Separate parent guide with hiding map and safety notes</li>
+        <li>A4 and US Letter print support</li>
+        <li>No brand names, no licensed characters, no external links</li>
+      </ul>
+    </div>
+
+    <div class="setup-bar">
+      <strong>Setup time:</strong> under 15 minutes · <strong>Play time:</strong> 10–20 minutes · <strong>Ages:</strong> 6–9 · <strong>Players:</strong> 1 child or a small group
+    </div>
+
+    <div class="product-footer">
+      Sample Demo · Star Quest · Not for Sale · Personal Use Only · October 2026<br>
+      Browser rendering not verified — test before printing
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
